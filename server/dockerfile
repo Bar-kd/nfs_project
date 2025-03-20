@@ -1,0 +1,20 @@
+FROM ubuntu:latest
+
+# Install necessary packages
+RUN apt-get update && apt-get install -y nfs-kernel-server rpcbind iproute2 tcpdump sysstat strace && \
+    mkdir -p /data /run/sendsigs.omit.d/rpcbind
+
+# Copy the file creation script into the container
+COPY files_creator.sh /files_creator.sh
+RUN chmod +x /files_creator.sh
+
+RUN groupadd -g 1001 trek && useradd -m -u 1001 -g 1001 star
+
+# Expose port for NFS
+EXPOSE 2049
+
+# Define entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

@@ -1,0 +1,19 @@
+FROM ubuntu:latest
+
+# Install necessary packages
+RUN apt update && apt install -y nfs-common rpcbind tcpdump sudo sysstat strace && \
+    mkdir -p /mnt/nfs /run/sendsigs.omit.d/rpcbind
+
+# Copy the file creation script into the container
+COPY files_creator.sh /files_creator.sh
+RUN chmod +x /files_creator.sh
+
+# Ensure user and group exist
+RUN groupadd -g 1001 trek || true && \
+    useradd -m -u 1001 -g 1001 star || true
+
+# Copy the startup script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+CMD ["/entrypoint.sh"]

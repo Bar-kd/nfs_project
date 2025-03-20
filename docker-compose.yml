@@ -1,0 +1,38 @@
+services:
+  mizar:
+    build:
+        context: ./server
+        dockerfile: Dockerfile
+    container_name: mizar
+    privileged: true
+    restart: always
+    networks:
+      nfs_network:
+        ipv4_address: 172.18.0.2 
+    volumes:
+      - nfs_data:/data
+    command: ["/entrypoint.sh"]
+
+  alcor:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: alcor
+    privileged: true
+    restart: always
+    depends_on:
+      - mizar
+    networks:
+      nfs_network:
+        ipv4_address: 172.18.0.3
+    command: ["/entrypoint.sh"]
+
+volumes:
+  nfs_data:
+
+networks:
+  nfs_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.18.0.0/16"
