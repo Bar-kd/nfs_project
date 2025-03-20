@@ -1,7 +1,5 @@
 #!/bin/bash
 
-USER root
-
 touch /data/root_squash
 echo "root_squash has been created!"
 chown root:root /data/root_squash

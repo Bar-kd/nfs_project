@@ -14,6 +14,25 @@ service rpcbind start
 service nfs-kernel-server start
 exportfs -r
 
+cleanup() {
+    echo "Stopping NFS services..."
+
+    # Unexport NFS shares
+    exportfs -uav
+
+    # identifies and kills all processes that are currently using the /data directory
+    fuser -km /data
+
+    service nfs-kernel-server stop
+    service rpcbind stop
+    killall rpcbind
+    killall nfsd
+
+    echo "All services stopped. Exiting..."
+    exit 0
+}
+trap cleanup SIGTERM SIGINT
+
 /files_creator.sh
 
 # Keep container running

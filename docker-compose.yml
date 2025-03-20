@@ -4,6 +4,7 @@ services:
         context: ./server
         dockerfile: Dockerfile
     container_name: mizar
+    stop_grace_period: 30s
     privileged: true
     restart: always
     networks:
@@ -18,6 +19,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
     container_name: alcor
+    stop_grace_period: 30s
     privileged: true
     restart: always
     depends_on:
